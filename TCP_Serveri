@@ -1,0 +1,209 @@
+from socket import *
+from math import pi
+import socket
+import time
+import datetime
+import random
+import string
+from _thread import *
+
+serverPort = 11010
+serverSocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+serverSocket.bind(('', serverPort))
+print('Serveri u startua ne localhost:'+str(serverPort))
+serverSocket.listen(15)
+print('Miresevini ne Serverin FIEK TCP!!!')
+print('Serveri eshte i gatshem te pranoj kerkesa!')
+
+
+def klientiThread(connectionSocket):
+    while 1:
+        try:
+            fjalia = connectionSocket.recv(1024)
+        except Exception:
+            print("Lidhja u shkeput ")
+            break
+        
+        
+        farray=fjalia.decode().split(" ")
+        
+        def IPADDR():
+            ip=str(addr[0])
+            connectionSocket.send(str("IP adresa e klientit eshte: "+ip).encode())
+        
+
+        def PORTNR():
+            ip=str(addr[1])
+            connectionSocket.send(str("Numri i portit eshte: "+ip).encode())
+        
+
+        def BASHKETINGELLORE(text):
+            nrBashketingelloreve = 0
+        bashketingelloret = ['B', 'C', 'D', 'E', 'F', 'G','H', 'I', 'J', 'K', 'L', 'LL','M','N','NJ','O','P','Q','R','RR','S','SH','T','TH','U','V','X','XH','Y','Z']
+            if i in text:
+                if i in bashketingelloret:
+                    nrBashketingelloreve=nrBashketingelloreve+1
+            connectionSocket.send(str("Numri i bashketingellore ne tekst eshte: "+str(nrBashketingelloreve)).encode())
+        
+
+        def PRINTO(text):
+            text=text.strip()
+            connectionSocket.send(str("Teksti i formatuar: "+text).encode())
+        
+
+        def HOST():
+            hosti=gethostname()
+            connectionSocket.send(hosti.encode())
+        
+
+        def TIME():
+            date = datetime.datetime.now().strftime('%Y/%m/%d %I:%M:%S%p')
+            connectionSocket.send(str("Koha e serverit eshte: "+str(date)).encode())
+        
+
+        def LOJA():
+            loja=[random.randint(1,49) for i in range(7)]
+            connectionSocket.send(str("7 numra random nga rangu 1-49: "+str(loja)).encode())
+        
+
+        def FIBONACCI(n):
+            nr=int(n)
+            if nr == 0:
+                return 0;
+            elif nr == 1:
+                return 1
+            else:
+                return FIBONACCI(nr-1)+FIBONACCI(nr-2)
+    
+        def KONVERTO(opt,temp):
+            try:
+                temp=float(temp)
+                if(opt=="KilowattToHorsePower"):
+                    tempK = 1.36*int(temp)
+                    connectionSocket.send(str(str(temp)+" Kilowatt = "+ str(tempK)+" HorsePower").encode())
+                
+                elif(opt=="HorsePowerToKilowatt"):
+                    tempK = float(temp)/1.36
+                    connectionSocket.send(str(str(temp)+" HorsePower = "+ str(tempK)+" Kilowatt").encode())
+                
+                elif(opt=="DegreesToRadians"):
+                    tempK = (float(temp)*(pi/180)
+                    connectionSocket.send(str(str(temp)+" Degrees = "+ str(tempK)+" Radians").encode())
+                
+                elif(opt=="RadiansToDegrees"):
+                    tempK = float(temp)*(180/pi)
+                    connectionSocket.send(str(str(temp)+" Radians = "+ str(tempK)+" Degrees").encode())
+                
+                elif(opt=="GallonsToLiters"):
+                    tempK = float(temp)*3.78541
+                    connectionSocket.send(str(str(temp)+" Gallons = "+ str(tempK)+" Liters").encode())
+                
+                elif(opt=="LitersToGallons"):
+                    tempK = (float(temp)/3.78541
+                    connectionSocket.send(str(str(temp)+" Liters = "+ str(tempK)+" Gallons").encode())
+            
+                
+            except ValueError:
+                connectionSocket.send(str("Parametri i dhene duhet te jete numer ne menyre qe te mund te konvertohet").encode())
+    
+        def TRIGKONVERTO(fromTo,var):
+            try:
+                var=float(var)
+                if(fromTo=="KelvinToCelsius"):
+                    kelvin= float(var)-(273.15)
+                    connectionSocket.send(str(str(var)+" Kelvin = "+ str(celsius)+" Celsius").encode())
+                            
+                elif(fromTo=="CelsiusToKelvin"):
+                    celsius = float(var)+(273.15)
+                    connectionSocket.send(str(str(var)+" Celsius = "+ str(kelvin)+" Kelvin").encode())
+                
+            except ValueError:
+                connectionSocket.send(str("Parametri i dhene duhet te jete numer").encode())
+
+        def RRETHI(rrezja):
+            try:
+                rr=float(rrezja)
+                connectionSocket.send(str("Perimetri i rrethit me rreze: "+str(rr)+" eshte "+str(2*pi*rr)+" ndersa siperfaqja e tij eshte "+str(pi*rr*rr)).encode())
+            
+            except ValueError:
+                connectionSocket.send(str("Parametri i dhene per rrezen duhet te jete numer.").encode())
+
+
+
+        if(str(farray[0])=="PRINTO"):
+            t=fjalia.decode().split(" ",1)
+            x=t[1]
+            PRINTO(x)
+        elif(str(farray[0])=="BASHKETINGELLORE"):
+            t=fjalia.decode().split(" ",1)
+            x=t[1]
+            ZANORE(x)
+        
+        elif(len(farray)==1):
+            if(str(farray[0]) in {'IPADDR','PORTNR','HOST','TIME','LOJA'}):
+                funks = farray[0]
+                if (funks=="IPADDR"):
+                    IPADDR()
+                if (funks=="PORTNR"):
+                    PORTNR()
+                if (funks=="HOST"):
+                    HOST()
+                if (funks=="TIME"):
+                   TIME()
+                if(funks=="LOJA"):
+                   LOJA()
+            else:
+                connectionSocket.send(str("Ne nuk e ofrojme kete lloj sherbimi ose nuk e keni specifikuar mire kerkesen tuaj").encode())
+        elif(len(farray)==2):
+            if(str(farray[0]) in {'PRINTO','BASHKETINGELLORE','FIBONACCI','RRETHI'}):
+                if(str(farray[1])!=""):
+                    funks = farray[0]
+                    x = farray[1]
+                    if(funks=="BASHKETINGELLORE"):
+                        BASHKETINGELLORE(x)
+                    if(funks=="FIBONACCI"):
+                        try:
+                            x=int(x)
+                            rez=FIBONACCI(x)
+                            connectionSocket.send(str("Numri i serise Fibonacci me indeks: "+str(x)+" eshte: "+str(rez)).encode())
+                        
+                        except ValueError:
+                            connectionSocket.send(str("Parametri i dhene duhet te jete numer integjer").encode())
+                    if(funks=="RRETHI"):
+                        RRETHI(x)                    
+                else:
+                    connectionSocket.send(str("Nuk keni dhene parametrin shoqerues per funksionin").encode())
+            else:
+                connectionSocket.send(str("Ne nuk e ofrojme kete lloj sherbimi ose nuk e keni specifikuar mire kerkesen tuaj").encode())
+       
+        elif(len(farray)==3):
+            if(str(farray[0]) in {'KONVERTO','TRIGKONVERTO'}):
+                if(str(farray[1]) in {'KilowattToHorsepower','HorsepowerToKilowatt','DegreesToRadians','RadiansToDegrees','GallonsToLiters','LitersToGallons','KelvinToCelsius','CelsiusToKelvin'}):
+                    if(str(farray[2])!=""):
+                        try:
+                            x=float(farray[2])
+                            funks=farray[0]
+                            opt=farray[1]
+                            if(funks=="KONVERTO"):
+                                KONVERTO(opt,x)
+                            if(funks=="TRIGKONVERTO"):
+                                TRIGKONVERTO(opt,x)
+                        except ValueError:
+                            connectionSocket.send(str("Parametri qe do te konvertohet duhet te jete numer").encode())
+                    else:
+                        connectionSocket.send(str("Nuk keni dhene parametrin shoqerues per funksionin").encode())
+                else:
+                    connectionSocket.send(str("Nuk ofrojme kete opsion per funksionin perkates ose nuk keni specifikuar si duhet emrin e tij.").encode())
+            else:
+                connectionSocket.send(str("Ne nuk e ofrojme kete lloj sherbimi ose nuk e keni specifikuar mire kerkesen tuaj").encode())
+        else:
+            connectionSocket.send(str("Mund te zgjedhni vetem opsionet ekzistuese ne menu").encode())
+
+        
+
+    
+
+while 1:
+    connectionSocket, addr = serverSocket.accept()
+    print('Klienti u lidh ne serverin %s me port %s' % addr)
+    start_new_thread(klientiThread,(connectionSocket,))
