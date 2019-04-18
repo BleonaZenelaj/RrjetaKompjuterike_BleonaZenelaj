@@ -54,8 +54,8 @@ while True:
         
 
     def LOJA():
-        loja=[random.randint(1,99) for i in range(20)]
-        serverSocket.sendto(str("20 numra random nga rangu i numrave 1-99: "+str(loja)).encode(),addr)
+        loja=[random.randint(1,49) for i in range(7)]
+        serverSocket.sendto(str("7 numra random nga rangu i numrave 1-49: "+str(loja)).encode(),addr)
         
 
     def FIBONACCI(n):
