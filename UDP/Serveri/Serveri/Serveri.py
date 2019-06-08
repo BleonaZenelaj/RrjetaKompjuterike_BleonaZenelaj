@@ -1,4 +1,3 @@
-from socket import *
 from math import pi
 import socket
 import time
@@ -6,7 +5,7 @@ import datetime
 import random
 import string
 
-serverPort = 11010
+serverPort = 12000
 serverSocket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 serverSocket.bind(('', serverPort))
 print('Serveri u startua ne localhost:'+str(serverPort))
@@ -19,43 +18,43 @@ while True:
     farray=fjalia.decode().split(" ")
 
 
-    def IPADDR():
+    def IPADRESA():
         ip=str(addr[0])
         serverSocket.sendto(str("IP adresa e klientit eshte: "+ip).encode(),addr)
         
 
-    def PORTNR():
+    def NUMRIIPORTIT():
         ip=str(addr[1])
         serverSocket.sendto(str("Numri i portit eshte: "+ip).encode(),addr)
         
 
     def BASHKETINGELLORE(text):
         nrBashketingelloreve = 0
-        bashketingelloret = ['B', 'C', 'D', 'E', 'F', 'G','H', 'I', 'J', 'K', 'L', 'LL','M','N','NJ','O','P','Q','R','RR','S','SH','T','TH','U','V','X','XH','Y','Z','ZH']
-        for i in text:
-            if i in bashketingelloret:
+        bashketingelloret = ['b','B','c', 'C', 'd', 'D', 'f','F', 'g', 'G', 'h', 'H', 'i', 'I','j', 'J', 'k', 'K', 'l', 'L', 'm','M', 'n', 'N', 'p', 'P', 'q', 'Q','r', 'R', 's', 'S', 't', 'T', 'v','V', 'x', 'X', 'z', 'Z']
+        for ch in text:
+            if ch in bashketingelloret:
                 nrBashketingelloreve=nrBashketingelloreve+1
-        serverSocket.sendto(str("Numri i bashketingelloreve ne tekst eshte: "+str(nrBashketingelloreve)).encode(),addr)
+        serverSocket.sendto(str("Numri i zanoreve ne tekst eshte: "+str(nrBashketingelloreve)).encode(),addr)
         
 
-    def PRINTO(text):
+    def PRINTIMI(text):
         text=text.strip()
         serverSocket.sendto(str("Teksti i formatuar: "+text).encode(),addr)
         
 
-    def HOST():
-        hosti=gethostname()
-        serverSocket.sendto(hosti.encode(),addr)
+    def EMRIIKOMPJUTERIT():
+            emriikompjuterit=socket.gethostname() 
+            serverSocket.sendto(emriikompjuterit.encode(),addr)
         
 
-    def TIME():
+    def KOHA():
         date = datetime.datetime.now().strftime('%Y/%m/%d %I:%M:%S%p')
         serverSocket.sendto(str("Koha e serverit eshte: "+str(date)).encode(),addr)
         
 
     def LOJA():
         loja=[random.randint(1,49) for i in range(7)]
-        serverSocket.sendto(str("7 numra random nga rangu i numrave 1-49: "+str(loja)).encode(),addr)
+        serverSocket.sendto(str("7 numra random nga rangu 1-49: "+str(loja)).encode(),addr)
         
 
     def FIBONACCI(n):
@@ -67,7 +66,7 @@ while True:
         else:
             return FIBONACCI(nr-1)+FIBONACCI(nr-2)
     
-    def KONVERTO(opt,temp):
+    def KONVERTIMI(opt,temp):
         try:
             temp=float(temp)
             if(opt=="KilowattToHorsepower"):
@@ -79,7 +78,7 @@ while True:
                 serverSocket.sendto(str(str(temp)+" Horsepower = "+ str(tempK)+" Kilowatt").encode(),addr)
                 
             elif(opt=="DegreesToRadians"):
-                tempK = (float(temp)*(pi/180)
+                tempK = float(temp)*(pi/180)
                 serverSocket.sendto(str(str(temp)+" Degrees = "+ str(tempK)+" Radians").encode(),addr)
                 
             elif(opt=="RadiansToDegrees"):
@@ -90,22 +89,24 @@ while True:
                 tempK = float(temp)*3.78541
                 serverSocket.sendto(str(str(temp)+" Gallons = "+ str(tempK)+" Liters").encode(),addr)
                 
-            elif(opt=="LitersToGallons"):
+            elif(opt=="LitersToGallon"):
                 tempK = float(temp)/3.78541
                 serverSocket.sendto(str(str(temp)+" Liters = "+ str(tempK)+" Gallons").encode(),addr)
+                
+        
                 
         except ValueError:
             serverSocket.sendto(str("Parametri i dhene duhet te jete numer ne menyre qe te mund te konvertohet").encode(),addr)
     
-    def TRIGKONVERTO(fromTo,var):
+    def TEMPKONVERTO(fromTo,var):
         try:
             var=float(var)
-            if(fromTo=="KelvinToCelsius"):
-                kelvin = float(var)-(273.15)
+            if(fromTo=="CelsiusToKelvin"):
+                celsius = float(var)+(273.15)
                 serverSocket.sendto(str(str(var)+" Celsius = "+ str(celsius)+" Kelvin").encode(),addr)
                             
-            elif(fromTo=="CelsiusToKelvin"):
-                celsius = float(var)+(273.15)
+            elif(fromTo=="KelvinToCelsius"):
+                kelvin = float(var)-(273.15)
                 serverSocket.sendto(str(str(var)+" Kelvin = "+ str(kelvin)+" Celsius").encode(),addr)
                 
         except ValueError:
@@ -121,32 +122,32 @@ while True:
 
 
 
-    if(str(farray[0])=="PRINTO"):
+    if(str(farray[0])=="PRINTIMI"):
         t=fjalia.decode().split(" ",1)
         x=t[1]
-        PRINTO(x)
+        PRINTIMI(x)
     elif(str(farray[0])=="BASHKETINGELLORE"):
         t=fjalia.decode().split(" ",1)
         x=t[1]
         BASHKETINGELLORE(x)
         
     elif(len(farray)==1):
-        if(str(farray[0]) in {'IPADDR','PORTNR','HOST','TIME','LOJA'}):
+        if(str(farray[0]) in {'IPADRESA','NUMRIIPORTIT','EMRIIKOMPJUTERIT','KOHA','LOJA'}):
             funks = farray[0]
-            if (funks=="IPADDR"):
-                IPADDR()
-            if (funks=="PORTNR"):
-                PORTNR()
-            if (funks=="HOST"):
-                HOST()
-            if (funks=="TIME"):
-               TIME()
+            if (funks=="IPADRESA"):
+                IPADRESA()
+            if (funks=="NUMRIIPORTIT"):
+                NUMRIIPORTIT()
+            if (funks=="EMRIIKOMPJUTERIT"):
+                EMRIIKOMPJUTERIT()
+            if (funks=="KOHA"):
+               KOHA()
             if(funks=="LOJA"):
                LOJA()
         else:
             serverSocket.sendto(str("Ne nuk e ofrojme kete lloj sherbimi ose nuk e keni specifikuar mire kerkesen tuaj").encode(),addr)
     elif(len(farray)==2):
-        if(str(farray[0]) in {'PRINTO','BASHKETINGELLORE','FIBONACCI','RRETHI'}):
+        if(str(farray[0]) in {'PRINTIMI','BASHKETINGELLORE','FIBONACCI','RRETHI'}):
             if(str(farray[1])!=""):
                 funks = farray[0]
                 x = farray[1]
@@ -168,17 +169,17 @@ while True:
             serverSocket.sendto(str("Ne nuk e ofrojme kete lloj sherbimi ose nuk e keni specifikuar mire kerkesen tuaj").encode(),addr)
        
     elif(len(farray)==3):
-        if(str(farray[0]) in {'KONVERTO','TRIGKONVERTO'}):
-            if(str(farray[1]) in {'KilowattToHorsepower','HorsepowerToKilowatt','DegreesToRadians','RadiansToDegrees','GallonsToLiters','LitersToGallons','KelvinToCelsius','CelsiusToKelvin'}):
+        if(str(farray[0]) in {'KONVERTIMI','TEMPKONVERTO'}):
+            if(str(farray[1]) in {'KilowattToHorsepower','HorsepowerToKilowatt','DegreesToRadians','RadiansToDegrees','GallonsToLiters','LitersToGallons'}):
                 if(str(farray[2])!=""):
                     try:
                         x=float(farray[2])
                         funks=farray[0]
                         opt=farray[1]
-                        if(funks=="KONVERTO"):
-                            KONVERTO(opt,x)
-                        if(funks=="TRIGKONVERTO"):
-                            TRIGKONVERTO(opt,x)
+                        if(funks=="KONVERTIMI"):
+                            KONVERTIMI(opt,x)
+                        if(funks=="TEMPKONVERTO"):
+                            TEMPKONVERTO(opt,x)
                     except ValueError:
                         serverSocket.sendto(str("Parametri qe do te konvertohet duhet te jete numer").encode(),addr)
                 else:
@@ -189,3 +190,4 @@ while True:
             serverSocket.sendto(str("Ne nuk e ofrojme kete lloj sherbimi ose nuk e keni specifikuar mire kerkesen tuaj").encode(),addr)
     else:
         serverSocket.sendto(str("Mund te zgjedhni vetem opsionet ekzistuese ne menu").encode(),addr)
+
